@@ -21,12 +21,12 @@ import plotly.graph_objs as go
 
 def twitter_setup():
 
-    CONSUMER_KEY    = 'um5DAgTkDgPOuRTeQhYfMKKiB'
-    CONSUMER_SECRET = 'tHlJpaNv6hcnOT7fwDC5LpFnOhFFAJTzXvh9EZuQ3aWpT33ghl'
+    CONSUMER_KEY    = ''
+    CONSUMER_SECRET = ''
 
     # Access:
-    ACCESS_TOKEN  = '810803675295780865-0TPoVKFvCFhR1JUZjRXmPhu0Ftv6nhZ'
-    ACCESS_SECRET = 'TpHxWdNwwlLAC48UFIkf3Z8eP9uVmdNLQDLFGlzQy59BK'
+    ACCESS_TOKEN  = ''
+    ACCESS_SECRET = ''
     auth = tweepy.OAuthHandler(CONSUMER_KEY, CONSUMER_SECRET)
     auth.set_access_token(ACCESS_TOKEN, ACCESS_SECRET)
 
