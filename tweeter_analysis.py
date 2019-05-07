@@ -64,12 +64,29 @@ def follower(userName):
 
 
 
-# In[49]:
-
-
-def alltweet():
+allTweets=[]
+def completeTweet(id,userN):
+    global allTweets
     twitterObj = twitter_setup()
-    allTweets=twitterObj.user_timeline(id='ashu__kumar',count=200)
+    curTweet=twitterObj.user_timeline(userN,count=200,max_id=id)
+    allTweets.extend(curTweet)
+
+
+
+localData={}
+def alltweet(userN='ashu__kumar'):
+    twitterObj = twitter_setup()
+    global localData
+    global allTweets
+    allTweets=[]
+    curTweet=twitterObj.user_timeline(userN,count=200)
+    allTweets.extend(curTweet)
+    while (1):
+        oldId=allTweets[-1].id
+        completeTweet(oldId,userN)
+        if(oldId==allTweets[-1].id):
+            break
+
     data = pd.DataFrame()
     data = pd.DataFrame(data=[tweet.text for tweet in allTweets], columns=['Tweets'])
     data['len']  = np.array([len(tweet.text) for tweet in allTweets])
@@ -80,11 +97,9 @@ def alltweet():
     data['RTs']    = np.array([tweet.retweet_count for tweet in allTweets])
     data['Location'] = np.array([tweet.geo for tweet in allTweets])
     #print(data['Date'])
-    return(data)
+    localData=data
 
-
-localData=alltweet()
-
+alltweet('ashu')
 
 
 #         countYearTweet=[]
@@ -126,9 +141,9 @@ def timeAnalysis(curYear):
     curMonth=today.month
     #curYear=today.year
     #print(pd_month[0])
-    count=0;
+    count=0
     #count_month={1:0,2:0,3:0,4:0,5:0,6:0,7:0,8:0,9:0,10:0,11:0,12:0}
-    count_month=[0,0,0,0,0,0,0,0,0,0,0,0]
+    count_month=[0,0,0,0,0,0,0,0,0,0,0,0,0]
 
     for y in range(1,13):
         count=0
@@ -170,7 +185,8 @@ def validUser(userName):
         return "Invalid User"
     return "Valid User"
 
-
+def update(user):
+    print("n")
 
 external_stylesheets = ['https://codepen.io/chriddyp/pen/bWLwgP.css']
 
@@ -196,6 +212,7 @@ app.layout = html.Div([
         type='text',
         value='user'
     ),
+     html.Button(id='submit-button', n_clicks=0, children='Submit'),
     html.Div(id='valid_user'),
          dcc.Dropdown(
                 id='yaxis-column',
@@ -221,16 +238,17 @@ app.layout = html.Div([
 
 @app.callback(
     Output('valid_user', 'children'),
-    [Input('user', 'value')]
+    [Input('submit-button','n_clicks')],[State('user', 'value')]
 )
-def callback_a(x):
-    return validUser(x)
+def callback_a(click,user):
+    alltweet(user)
+    return validUser(user)
 
 @app.callback(
     Output('graphe', 'figure'),
-    [Input('year-slider', 'value')]
+    [Input('year-slider', 'value'),Input('submit-button','n_clicks')]
 )
-def callback_a(slider_year):
+def callback_b(slider_year,click):
     trace1 = go.Bar(
     x=[1,2,3,4,5,6,7,8,9,10,11,12],
     y=timeAnalysis(slider_year),
